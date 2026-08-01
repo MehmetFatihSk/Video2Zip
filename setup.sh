@@ -13,7 +13,7 @@ if ! "$PY" -c "import tkinter" >/dev/null 2>&1; then
   VER="$("$PY" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
   cat <<EOF
 
-✗ Bu Python kurulumunda Tkinter yok.
+HATA: Bu Python kurulumunda Tkinter yok.
   Homebrew kullanıyorsanız:
 
       brew install python-tk@${VER}
@@ -38,4 +38,4 @@ echo "▸ Bağımlılıklar kuruluyor"
 ./.venv/bin/python -m pip install -r requirements.txt --quiet
 
 echo
-echo "✓ Kurulum tamam. Uygulamayı başlatmak için:  ./run.sh"
+echo "Kurulum tamam. Uygulamayı başlatmak için:  ./run.sh"

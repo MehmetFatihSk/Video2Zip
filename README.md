@@ -1,9 +1,13 @@
-# Video2Zip
+<p align="center">
+  <img src="assets/AppIcon.png" width="128" height="128" alt="Video2Zip uygulama ikonu">
+</p>
 
-macOS için **tamamen yerel** çalışan video → kare (frame) dönüştürücü.
+<h1 align="center">Video2Zip</h1>
+
+<p align="center">macOS için <b>tamamen yerel</b> çalışan video → kare (frame) dönüştürücü.<br>
 Bir videonun her karesini ayrı görsel dosyasına çevirir ve hepsini tek bir ZIP
-arşivinde toplar. Tarayıcı yok, sunucu yok, dosya yükleme yok — videonuz
-Mac'inizden hiç çıkmaz.
+arşivinde toplar.<br>Tarayıcı yok, sunucu yok, dosya yükleme yok — videonuz
+Mac'inizden hiç çıkmaz.</p>
 
 ```
 Video seç → biçim + ayarlar → kareleri çıkar → ZIP olarak kaydet
@@ -164,6 +168,17 @@ görünmesi ve davranması:
   `(açık, koyu)` çifti (`labelColor`, `secondaryLabelColor`, `separatorColor`,
   `controlAccentColor` karşılıkları). CustomTkinter appearance mode değişince
   doğru olanı kendisi seçer — tek satır geçiş kodu yok.
+- **Logo tek kaynaktan, iki sürümde.** `appicon.py` logoyu kodla çizer ve iki
+  biçimde sunar: `render()` — Dock/Finder için gradyanlı squircle (`.icns`);
+  `render_glyph()` — arayüz için menü bar şablon ikonları gibi tek renkli,
+  şeffaf siluet (başlıkta 26 px, boş durumda 40 px, temaya göre siyah/beyaz).
+  Sembol iki yerde ayrı tanımlanmaz, ikisi de aynı çizim kodundan gelir.
+  Retina için 2x çizilip küçültülür (~2 ms).
+- **Okunur metin kademeleri.** Sistemin `secondaryLabelColor` /
+  `tertiaryLabelColor` karşılıkları masaüstü penceresinde fazla silik kalıyor;
+  üç kademe de belirginleştirildi. Kart yüzeyinde ölçülen kontrastlar:
+  birincil 21:1 / 13.9:1, ikincil 10.9:1 / 11.5:1, üçüncül 6.8:1 / 8.5:1
+  (açık / koyu) — hepsi WCAG AA'nın üzerinde, çoğu AAA.
 - **Sistem tipografisi**: `.AppleSystemUIFont`, `TkDefaultFont`'un bildirdiği
   boyuttan türetilen ölçek (headline / body / callout / caption). Kullanıcının
   sistem metin boyutu ayarına uyar.

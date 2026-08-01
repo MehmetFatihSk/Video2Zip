@@ -24,10 +24,13 @@ DIVIDER: Pair = ("#D6D6DA", "#3A3A3C")     # separatorColor
 BORDER: Pair = ("#C9C9CC", "#48484A")
 
 # --------------------------------------------------------------- metin -----
-TEXT: Pair = ("#000000", "#FFFFFF")        # labelColor
-TEXT_2: Pair = ("#6E6E73", "#98989D")      # secondaryLabelColor
-TEXT_3: Pair = ("#8E8E93", "#7C7C80")      # tertiaryLabelColor
-TEXT_OFF: Pair = ("#B4B4B9", "#5A5A5E")    # disabled
+# Sistemin secondary/tertiary label renkleri masaüstünde fazla silik kalıyor;
+# hiyerarşiyi koruyup okunurluğu artırmak için kademeler belirgin tutuldu.
+# Koyu modda üç kademe de beyaza yakın, hepsi AA'yı rahat geçiyor.
+TEXT: Pair = ("#000000", "#FFFFFF")        # birincil   (koyu: 15.9:1)
+TEXT_2: Pair = ("#3C3C43", "#E9E9EE")      # ikincil    (koyu: 13.4:1)
+TEXT_3: Pair = ("#5A5A60", "#C9C9D0")      # üçüncül    (koyu:  9.6:1)
+TEXT_OFF: Pair = ("#8E8E96", "#909099")    # devre dışı (okunur ama sönük)
 
 # -------------------------------------------------------------- vurgu ------
 ACCENT: Pair = ("#007AFF", "#0A84FF")      # controlAccentColor

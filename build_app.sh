@@ -121,6 +121,6 @@ codesign --force --deep --sign - "${BUNDLE}" 2>/dev/null || \
 
 SIZE="$(du -sh "${BUNDLE}" | cut -f1)"
 echo
-echo "✓ Hazır: ${BUNDLE}  (${SIZE})"
+echo "Hazır: ${BUNDLE}  (${SIZE})"
 echo "  Uygulamalar klasörüne kopyalamak için:"
 echo "      cp -R \"$(pwd)/${BUNDLE}\" /Applications/"

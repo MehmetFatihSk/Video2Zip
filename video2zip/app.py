@@ -89,7 +89,6 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
         self._on_format_change()
         self._update_controls()
         self.dnd_ready = self._setup_dnd()
-        self.lbl_drop_hint.configure(text=self._drop_hint_text())
         self._setup_mac_handlers()
 
         self.protocol("WM_DELETE_WINDOW", self._on_close)
@@ -151,12 +150,12 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
         if self.phase in ("extract", "zip"):
             return
         self.source_card.configure(border_color=theme.ACCENT, border_width=2)
-        self.lbl_drop_hint.configure(text="Bırakın", text_color=theme.ACCENT)
+        self.lbl_empty.configure(text="Bırakın", text_color=theme.ACCENT)
 
     def _on_drop_leave(self, _event=None):
         self.source_card.configure(border_color=theme.BORDER, border_width=1)
-        self.lbl_drop_hint.configure(text=self._drop_hint_text(),
-                                     text_color=theme.TEXT_3)
+        self.lbl_empty.configure(text="Henüz video seçilmedi",
+                                 text_color=theme.TEXT)
 
     def _on_drop(self, event):
         self._on_drop_leave()
@@ -173,9 +172,6 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
                 parent=self)
             return
         self._load_video(video)
-
-    def _drop_hint_text(self) -> str:
-        return "veya dosyayı buraya sürükleyin" if self.dnd_ready else ""
 
     def _divider(self, row: int) -> None:
         ctk.CTkFrame(self, height=1, fg_color=theme.DIVIDER,
@@ -207,20 +203,38 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
         header = self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
         header.grid(row=0, column=0, sticky="ew",
                     padx=theme.SP_5, pady=theme.SP_4)
-        header.grid_columnconfigure(1, weight=1)
+        header.grid_columnconfigure(2, weight=1)
+
+        # uygulama logosu — appicon.py ile aynı kaynaktan, koda gömülü
+        ctk.CTkLabel(header, text="", image=self._logo(26)).grid(
+            row=0, column=0, padx=(0, theme.SP_3))
 
         ctk.CTkLabel(header, text=APP_NAME, font=self.fonts.headline,
-                     text_color=theme.TEXT).grid(row=0, column=0, sticky="w")
+                     text_color=theme.TEXT).grid(row=0, column=1, sticky="w")
         self.lbl_header_note = ctk.CTkLabel(
             header, text="Video → kare", font=self.fonts.caption,
             text_color=theme.TEXT_3)
-        self.lbl_header_note.grid(row=0, column=1, sticky="e", padx=(0, theme.SP_3))
+        self.lbl_header_note.grid(row=0, column=2, sticky="e", padx=(0, theme.SP_3))
 
         self.btn_appearance = self._icon_button(
             header, "sun" if self.appearance == "light" else "moon",
             self._toggle_appearance,
             "Koyu moda geç" if self.appearance == "light" else "Açık moda geç")
-        self.btn_appearance.grid(row=0, column=2, sticky="e")
+        self.btn_appearance.grid(row=0, column=3, sticky="e")
+
+    def _logo(self, size: int, colors=None):
+        """Uygulama logosunun monokrom sürümü — temaya göre renklenir.
+
+        Renkli squircle yalnızca Dock/Finder ikonudur; arayüz içinde logo,
+        menü bar şablon ikonları gibi tek renk ve şeffaf durur.
+        """
+        from .appicon import render_glyph
+
+        pair = colors or theme.TEXT
+        return ctk.CTkImage(                       # Retina için 2x çiz
+            light_image=render_glyph(size * 2, pair[0]),
+            dark_image=render_glyph(size * 2, pair[1]),
+            size=(size, size))
 
     def _icon_button(self, parent, icon: str, command, tooltip: str = "") -> ctk.CTkButton:
         """Çerçevesiz, yalnızca ikon içeren düz buton."""
@@ -271,19 +285,17 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
     def _build_source_section(self, parent, row: int) -> None:
         card = self.source_card = self._section(parent, row, "Kaynak")
 
-        # video seçilmeden önceki boş durum
+        # video seçilmeden önceki boş durum — kutunun ortasında
         self.empty_state = ctk.CTkFrame(card, fg_color="transparent")
-        self.empty_state.grid(row=0, column=0, sticky="ew", pady=(theme.SP_6, theme.SP_5))
+        self.empty_state.grid(row=0, column=0, pady=theme.SP_7)
         self.empty_state.grid_columnconfigure(0, weight=1)
         ctk.CTkLabel(self.empty_state, text="",
-                     image=self.icons.get("video-large", 34, theme.TEXT_3)).grid(
-            row=0, column=0, pady=(0, theme.SP_3))
-        ctk.CTkLabel(self.empty_state, text="Henüz video seçilmedi",
-                     font=self.fonts.body, text_color=theme.TEXT_2).grid(row=1, column=0)
-        self.lbl_drop_hint = ctk.CTkLabel(
-            self.empty_state, text="", font=self.fonts.caption,
-            text_color=theme.TEXT_3)
-        self.lbl_drop_hint.grid(row=2, column=0, pady=(theme.SP_1, 0))
+                     image=self._logo(40, theme.TEXT)).grid(
+            row=0, column=0, pady=(0, theme.SP_4))
+        self.lbl_empty = ctk.CTkLabel(
+            self.empty_state, text="Henüz video seçilmedi",
+            font=self.fonts.body, text_color=theme.TEXT)
+        self.lbl_empty.grid(row=1, column=0)
 
         # dolu durum
         self.file_state = ctk.CTkFrame(card, fg_color="transparent")
@@ -299,7 +311,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
                                          font=self.fonts.body, text_color=theme.TEXT)
         self.lbl_filename.grid(row=0, column=1, sticky="w")
         self.lbl_meta = ctk.CTkLabel(self.file_state, text="", anchor="w",
-                                     font=self.fonts.caption, text_color=theme.TEXT_2)
+                                     font=self.fonts.callout, text_color=theme.TEXT_2)
         self.lbl_meta.grid(row=1, column=1, sticky="w")
 
         # seçim butonu
@@ -383,7 +395,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
 
         # tahmin ------------------------------------------------------------
         self.lbl_estimate = ctk.CTkLabel(
-            parent, text="", font=self.fonts.caption, text_color=theme.TEXT_2,
+            parent, text="", font=self.fonts.callout, text_color=theme.TEXT_2,
             anchor="w")
         self.lbl_estimate.grid(row=row + 1, column=0, sticky="w",
                                padx=theme.SP_5 + theme.SP_2,
@@ -401,7 +413,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
             button_hover_color=("#FFFFFF", "#FFFFFF"), border_width=5)
         slider.grid(row=0, column=0, sticky="ew", padx=(0, theme.SP_4))
         value = ctk.CTkLabel(holder, text="", font=self.fonts.mono,
-                             text_color=theme.TEXT_2, width=76, anchor="e")
+                             text_color=theme.TEXT, width=76, anchor="e")
         value.grid(row=0, column=1, sticky="e")
         return slider, value
 
@@ -440,7 +452,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
         self.progress.set(0)
         self.progress.grid_remove()
 
-        self.lbl_detail = ctk.CTkLabel(status, text="", font=self.fonts.caption,
+        self.lbl_detail = ctk.CTkLabel(status, text="", font=self.fonts.callout,
                                        text_color=theme.TEXT_3, anchor="w")
         self.lbl_detail.grid(row=2, column=0, sticky="w", pady=(theme.SP_1, 0))
 
@@ -460,7 +472,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
             width=136, height=30, corner_radius=theme.R_FIELD,
             font=self.fonts.body_bold, fg_color=theme.ACCENT,
             hover_color=theme.ACCENT_HOVER, text_color=theme.ON_ACCENT,
-            text_color_disabled=theme.TEXT_OFF)
+            text_color_disabled=theme.ON_ACCENT)
         self.btn_primary.grid(row=0, column=1)
 
     # ======================================================== görünüm modu
@@ -542,7 +554,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
         quality = int(self.var_quality.get())
         self.lbl_quality_value.configure(
             text=str(quality) if spec.quality_kind else "yok",
-            text_color=theme.TEXT_2 if spec.quality_kind else theme.TEXT_OFF)
+            text_color=theme.TEXT if spec.quality_kind else theme.TEXT_OFF)
 
         scale = int(self.var_scale.get())
         if self.video and scale != 100:

@@ -94,19 +94,6 @@ def _moon(d: ImageDraw.ImageDraw, c: str) -> None:
     d.bitmap((0, 0), layer, fill=c)
 
 
-def _video_large(d: ImageDraw.ImageDraw, c: str) -> None:
-    """Boş durum için: film şeridi + oynatma üçgeni."""
-    d.rounded_rectangle(_box(2, 4.5, 22, 19.5), radius=3.5 * SS,
-                        outline=c, width=int((STROKE - 0.2) * SS))
-    _stroke(d, [(2, 8.6), (22, 8.6)], c, width=STROKE - 0.4, cap=False)
-    _stroke(d, [(2, 15.4), (22, 15.4)], c, width=STROKE - 0.4, cap=False)
-    d.polygon(_pts_poly([(10.4, 10.2), (15.2, 12.0), (10.4, 13.8)]), fill=c)
-
-
-def _pts_poly(points: list[tuple[float, float]]) -> list[tuple[float, float]]:
-    return [(x * SS, y * SS) for x, y in points]
-
-
 _GLYPHS: dict[str, Callable[[ImageDraw.ImageDraw, str], None]] = {
     "film": _film,
     "folder": _folder,
@@ -116,7 +103,6 @@ _GLYPHS: dict[str, Callable[[ImageDraw.ImageDraw, str], None]] = {
     "reveal": _reveal,
     "sun": _sun,
     "moon": _moon,
-    "video-large": _video_large,
 }
 
 
