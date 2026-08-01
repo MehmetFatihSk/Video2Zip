@@ -14,7 +14,7 @@ import queue
 import shutil
 import subprocess
 import sys
-from tkinter import filedialog, messagebox
+from tkinter import TclError, filedialog, messagebox
 from typing import Optional
 
 import customtkinter as ctk
@@ -58,7 +58,7 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
 
         self.settings = prefs.load()
         self.appearance = self.settings.get("appearance", "light")
-        ctk.set_appearance_mode(self.appearance)
+        self._apply_appearance(self.appearance)
 
         self.title(APP_NAME)
         self.minsize(600, 480)
@@ -464,9 +464,24 @@ class Video2ZipApp(ctk.CTk, _DND_MIXIN):
         self.btn_primary.grid(row=0, column=1)
 
     # ======================================================== görünüm modu
+    def _apply_appearance(self, mode: str) -> None:
+        """Temayı hem widget'lara hem pencere çerçevesine uygular.
+
+        `set_appearance_mode` yalnızca CustomTkinter'ın kendi çizdiği
+        yüzeyleri etkiler; başlık çubuğunu macOS çizer ve uygulamanın
+        NSAppearance'ına bakar. Tk 8.7+/9 bunu `-appearance` penceresi
+        özelliğiyle açar — aksi hâlde koyu temada başlık çubuğu beyaz kalır.
+        """
+        ctk.set_appearance_mode(mode)
+        try:
+            self.attributes("-appearance",
+                            "darkaqua" if mode == "dark" else "aqua")
+        except TclError:
+            pass          # eski Tk sürümlerinde bu özellik yok
+
     def _toggle_appearance(self) -> None:
         self.appearance = "dark" if self.appearance == "light" else "light"
-        ctk.set_appearance_mode(self.appearance)
+        self._apply_appearance(self.appearance)
         prefs.save(appearance=self.appearance)
         self.btn_appearance.configure(
             image=self.icons.get("sun" if self.appearance == "light" else "moon",

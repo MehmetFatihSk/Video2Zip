@@ -173,6 +173,12 @@ görünmesi ve davranması:
   çizilip küçültülür; her ikon açık ve koyu varyantıyla birlikte üretilir.
 - **Vurgu rengi** yalnızca ana butonda ve ilerleme çubuğunda kullanılır;
   geri kalan her şey gri tonlarında.
+- **Başlık çubuğu temaya uyar.** `set_appearance_mode` yalnızca
+  CustomTkinter'ın çizdiği yüzeyleri etkiler; başlık çubuğunu macOS çizer ve
+  uygulamanın `NSAppearance`'ına bakar. Bu yüzden tema değişiminde Tk'nin
+  `-appearance` pencere özelliği de (`aqua` / `darkaqua`) güncellenir —
+  yoksa koyu temada başlık çubuğu beyaz kalır. Tk 8.7+ gerektirir, eski
+  sürümlerde sessizce atlanır.
 - **Hafif saydamlık** (`-alpha 0.95`) — sistem panellerinin materyal hissine
   yaklaşmak için. Tk gerçek vibrancy/blur sunmadığından pencere opaklığı
   kullanılır; değer `app.py` içindeki `WINDOW_ALPHA` sabitinden ayarlanabilir.
