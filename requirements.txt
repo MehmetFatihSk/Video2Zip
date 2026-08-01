@@ -1,0 +1,4 @@
+opencv-python>=4.9
+customtkinter>=5.2
+Pillow>=10.0
+tkinterdnd2>=0.4      # sürükle-bırak (isteğe bağlı; yoksa uygulama yine çalışır)

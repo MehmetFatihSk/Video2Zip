@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+Video2Zip.app/
+assets/AppIcon.iconset/
